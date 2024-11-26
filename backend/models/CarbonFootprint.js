@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const resultSchema = new mongoose.Schema({
-    totalEmission: { type: Number, required: true }, // Added field for total emission
-    totalOffset: { type: Number, required: true }, 
-}, { timestamps: true });
+const CarbonFootprintSchema = new Schema({
+    totalEmission: { type: Number, required: true },
+    totalOffset: { type: Number, required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'users', required: true },  // Make sure this is correctly set
+});
 
-const Result = mongoose.model('Result', resultSchema);
+const CarbonFootprint = mongoose.model('CarbonFootprint', CarbonFootprintSchema);
 
-module.exports = Result;
+module.exports = CarbonFootprint;

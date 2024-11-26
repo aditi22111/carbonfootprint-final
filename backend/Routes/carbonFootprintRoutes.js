@@ -1,12 +1,11 @@
 const express = require('express');
-const { saveResult, getResults } = require('../Controllers/carbonFootprintController');
-
 const router = express.Router();
+const carbonFootprintController = require('../Controllers/carbonFootprintController');  // Ensure this path is correct
+const CarbonFootprintModel = require('../models/CarbonFootprint');
+const leaderboardController = require('../Controllers/leaderboardController');
+// Define routes
+router.post('/results', carbonFootprintController.saveResult);  // Correct handler function
 
-// Route to save results
-router.post('/save', saveResult);
-
-// Route to fetch results
-router.get('/', getResults);
+router.get('/leaderboard', leaderboardController.getLeaderboard);
 
 module.exports = router;

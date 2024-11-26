@@ -23,38 +23,41 @@ function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
         const { email, password } = loginInfo;
+    
         if (!email || !password) {
-            return handleError('email and password are required')
+            return handleError('Email and password are required');
         }
+    
         try {
-            const url = 'http://localhost:8080/auth/login';
-            const response = await fetch(url, {
-                method: "POST",
+            const response = await fetch('http://localhost:8080/auth/login', {
+                method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(loginInfo)
+                body: JSON.stringify({ email, password }),
             });
+    
             const result = await response.json();
-            const { success, message, jwtToken, name, error } = result;
+            const { success, message, token, name, userId } = result;
+    
             if (success) {
                 handleSuccess(message);
-                localStorage.setItem('token', jwtToken);
+    
+                // Save details in localStorage
+                localStorage.setItem('token', token);
                 localStorage.setItem('loggedInUser', name);
-                setTimeout(() => {
-                    navigate('/home')
-                }, 1000)
-            } else if (error) {
-                const details = error?.details[0].message;
-                handleError(details);
-            } else if (!success) {
-                handleError(message);
+                localStorage.setItem('userId', userId); // Save userId for future use
+    
+                navigate('/home');
+            } else {
+                handleError(result.message);
             }
-            console.log(result);
         } catch (err) {
-            handleError(err);
+            handleError('Login failed. Please try again.');
+            console.error(err);
         }
-    }
+    };
+    
 
     return (
         <div className='container'>

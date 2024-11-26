@@ -6,6 +6,7 @@ import Result from "./pages/Result.js";
 import LoginForm from "./pages/Login.js";
 import SignupForm from "./pages/Signup.js";
 import { jwtDecode } from 'jwt-decode';
+import Leaderboard from "./pages/Leaderboard.js";
 
 export default function App() {
   const navigate = useNavigate();
@@ -236,6 +237,7 @@ export default function App() {
           />
         }
       />
+      <Route path="/leaderboard" element={<Leaderboard />} />
     </Routes>
   );
 }

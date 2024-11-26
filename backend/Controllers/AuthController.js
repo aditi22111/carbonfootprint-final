@@ -33,26 +33,37 @@ const login = async (req, res) => {
         const { email, password } = req.body;
         console.log('Request Body:', req.body);
 
+        // Find the user in the database by email
         const user = await UserModel.findOne({ email });
         if (!user) {
             console.log('User not found');
             return res.status(403).json({ message: 'Invalid credentials', success: false });
         }
 
+        // Compare passwords
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) {
             console.log('Invalid password');
             return res.status(403).json({ message: 'Invalid credentials', success: false });
         }
 
+        // Generate a JWT token
         const token = jwt.sign(
-            { email: user.email, _id: user._id },
+            { email: user.email, _id: user._id }, // Include the ObjectId in the token
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
 
         console.log('Login successful, token generated:', token);
-        res.status(200).json({ message: 'Login successful', success: true, token, name: user.name });
+
+        // Send ObjectId as userId in the response
+        res.status(200).json({
+            message: 'Login successful',
+            success: true,
+            token,
+            name: user.name,
+            userId: user._id.toString(), // Convert ObjectId to string if needed
+        });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ message: 'Internal server error', success: false });

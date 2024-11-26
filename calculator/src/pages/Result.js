@@ -6,10 +6,12 @@ import 'chart.js/auto';
 import { motion } from "framer-motion"
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { stringify } from 'flatted';
+import { Link, useNavigate } from 'react-router-dom'
 
 export default function Result(props) {
     const [isDataSaved, setIsDataSaved] = useState(false); // State to track data saving status
-
+    const navigate = useNavigate();
     
     const monthMapping = {
         'January': 1,
@@ -409,31 +411,44 @@ export default function Result(props) {
     //         console.error('Error saving data:', error);
     //     });
     // };
-    const saveResultsToBackend = () => {
-        // const totalEmission = parseFloat(123.45).toFixed(2); // Replace with actual calculation logic
-        // const totalOffset = parseFloat(67.89).toFixed(2);    // Replace with actual calculation logic
+    const saveResultsToBackend = async () => {
+        try {
+            const userId = localStorage.getItem('userId'); // Retrieve userId from local storage
+            if (!userId) {
+                console.error('User ID not found in local storage!');
+                return;
+            }
     
-        const dataToSave = {
-            totalEmission,
-            totalOffset,
-        };
+            const dataToSave = {
+                totalEmission, // Ensure this value is defined correctly
+                totalOffset,   // Ensure this value is defined correctly
+                userId,        // Include userId in the payload
+            };
     
-        fetch('http://localhost:8080/api/results/save', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(dataToSave),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log('Data saved successfully:', data);
-            })
-            .catch((error) => {
-                console.error('Error saving data:', error);
+            console.log('Data to save:', dataToSave); // Debugging log
+    
+            // Await the fetch response
+            const response = await fetch('http://localhost:8080/api/results', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataToSave), // Serialize data as JSON
             });
+    
+            const result = await response.json(); // Await the parsing of JSON response
+            navigate('/leaderboard');
+            if (response.ok) {
+                console.log('Data saved successfully:', result);
+            } else {
+                console.error('Error saving data:', result);
+            }
+        } catch (error) {
+            console.error('Error in saveResultsToBackend:', error);
+        }
     };
     
+
    
    
     

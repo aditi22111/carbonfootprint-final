@@ -1,38 +1,38 @@
-const Result = require('../models/CarbonFootprint');
+const CarbonFootprint = require('../models/CarbonFootprint');
 
-// Save result to database
-const saveResult = async (req, res) => {
+const getResults = async (req, res) => {
     try {
-        const { totalEmission, totalOffset } = req.body;
+        const results = await CarbonFootprint.find(); // Example of getting results
+        res.status(200).json(results);
+    } catch (error) {
+        console.error('Error fetching results:', error);
+        res.status(500).json({ error: 'Failed to fetch results' });
+    }
+};
 
-        // Validate the required fields
-        if (totalEmission == null || totalOffset == null || isNaN(totalEmission) || isNaN(totalOffset)) {
-            return res.status(400).json({ error: 'Invalid totalEmission or totalOffset value' });
-        }
+const saveResult = async (req, res) => {
+    const { totalEmission, totalOffset, userId } = req.body;
 
-        // Create a new result with totalEmission and totalOffset
-        const result = new Result({
-            totalEmission: Number(parseFloat(totalEmission).toFixed(2)), // Ensure proper formatting
-            totalOffset: Number(parseFloat(totalOffset).toFixed(2)),     // Ensure proper formatting
+    if (!userId) {
+        return res.status(400).json({ error: 'userId is required' });
+    }
+
+    try {
+        const newResult = new CarbonFootprint({
+            totalEmission,
+            totalOffset,
+            userId,
         });
 
-        await result.save();
-
-        res.status(201).json({ message: 'Result saved successfully', result });
+        const savedResult = await newResult.save();
+        res.status(200).json(savedResult);
     } catch (error) {
+        console.error('Error saving result:', error);
         res.status(500).json({ error: 'Failed to save result', details: error.message });
     }
 };
 
-
-// Fetch all results
-const getResults = async (req, res) => {
-    try {
-        const results = await Result.find();
-        res.status(200).json(results);
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch results', details: error.message });
-    }
+module.exports = {
+    getResults,
+    saveResult,
 };
-
-module.exports = { saveResult, getResults };

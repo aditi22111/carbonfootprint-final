@@ -16,12 +16,15 @@ app.get('/ping', (req, res) => {
 });
 
 // Middleware setup
-app.use(bodyParser.json());
-app.use(cors());
+app.use(express.json({ limit: '50mb' }));
+app.use(cors({
+    origin: 'http://localhost:3000', // Allow only your frontend to access the backend
+    methods: ['GET', 'POST'], // Allow specific methods
+}));
 
 // Routes
 app.use('/auth', AuthRouter);
-app.use('/api/results', carbonFootprintRoutes);
+app.use('/api', carbonFootprintRoutes);
 
 // Start the server
 app.listen(PORT, () => {
