@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState} from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { Bar } from 'react-chartjs-2';
 import { Line } from 'react-chartjs-2';
@@ -8,6 +8,9 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 export default function Result(props) {
+    const [isDataSaved, setIsDataSaved] = useState(false); // State to track data saving status
+
+    
     const monthMapping = {
         'January': 1,
         'February': 2,
@@ -103,6 +106,8 @@ export default function Result(props) {
             }
         ]
     }
+    
+     
 
     let totalEmission = 0;
     let totalOffset = 0;
@@ -382,8 +387,58 @@ export default function Result(props) {
         )
     }
     props.setResult(1);
-    return (
+    // const saveResultsToBackend = () => {
+    //     const dataToSave = {
+    //         totalEmission,
+    //     totalOffset, // Count of offset instances
+    //     };
+    //     fetch('http://localhost:8080/api/results/save', { 
+    //         method: 'POST',
+            
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify(dataToSave),
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         console.log('Data saved successfully:', data);
+            
+    //     })
+    //     .catch(error => {
+    //         console.error('Error saving data:', error);
+    //     });
+    // };
+    const saveResultsToBackend = () => {
+        // const totalEmission = parseFloat(123.45).toFixed(2); // Replace with actual calculation logic
+        // const totalOffset = parseFloat(67.89).toFixed(2);    // Replace with actual calculation logic
     
+        const dataToSave = {
+            totalEmission,
+            totalOffset,
+        };
+    
+        fetch('http://localhost:8080/api/results/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dataToSave),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Data saved successfully:', data);
+            })
+            .catch((error) => {
+                console.error('Error saving data:', error);
+            });
+    };
+    
+   
+   
+    
+    return (
+        
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }} className='result'>
             <Navbar></Navbar>
             <h1><b>Results</b></h1>
@@ -397,20 +452,26 @@ export default function Result(props) {
                     <Doughnut data={componentWise} />
                 </div>
                 <div className='pieChart'>
-                    <h3 style={{ textAlign: "center" }}>Scope-wise distribution<br /><h5>(Tonnes of CO2)</h5></h3>
+                    <h3 style={{ textAlign: "center" }}>Scope-wise distribution<br /><h1>(Tonnes of CO2)</h1></h3>
                     <Doughnut data={scopeWise} />
                 </div>
                 <div className='bar'>
                     <h3 style={{ textAlign: "center" }}>Month-wise distribution<br /><h5>(Tonnes of CO2)</h5></h3>
                     <Line id="bar" data={monthWise} options={{ scales: { y: { beginAtZero: true } } }} />
                 </div>
-                <div className='bar'>
+                {/* Button to trigger data save */}
+                <button onClick={saveResultsToBackend}>
+                    Save Data to Backend
+                </button>
+
+                {isDataSaved && <p>Data has been successfully saved!</p>}
+                {/* <div className='bar'>
                     <h3 style={{ textAlign: "center" }}>Facility-wise distribution<br /><h5>(Tonnes of CO2)</h5></h3>
                     <Bar id="bar" data={facilityWise} options={{ scales: { y: { beginAtZero: true } } }} />
-                </div>
+                </div> */}
+               
             </div>
             <Footer></Footer>
         </motion.div>
     );
 }
-

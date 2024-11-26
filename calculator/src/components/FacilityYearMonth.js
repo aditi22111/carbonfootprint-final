@@ -14,16 +14,7 @@ const FacilityYearMonth = (data) => {
                 <h3>Facility<p style={{ display: 'inline', color: 'red' }}>*</p></h3>
                 <Select className="Select" value={data.lastInstance.facilityName ? data.lastInstance.facilityName : null} placeholder="Choose Facility" onChange={(event, value) => { handleChange(data.array, data.setArray, value, data.array.length - 1, 'facilityName') }}>
                     <Option value='Residential Areas'>Residential Areas</Option>
-                    <Option value='Hostels'>Hostels</Option>
-                    <Option value='Academic Area'>Academic Area</Option>
-                    <Option value='Health Centre'>Health Centre</Option>
-                    <Option value='Schools'>Schools</Option>
-                    <Option value="Visitor's Hostel">Visitor's Hostel</Option>
-                    <Option value="Servant's Quarters">Servant's Quarters</Option>
-                    <Option value="Shops/Bank/PO">Shops/Bank/PO</Option>
-                    <Option value="Lawns and Horticulture">Lawns and Horticulture</Option>
-                    <Option value="Dhobhighat">Dhobhighat</Option>
-                    <Option value='Others'>Others</Option>
+                    
                 </Select>
             </div>
             <div className='inputs'>

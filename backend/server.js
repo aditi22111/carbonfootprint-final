@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const AuthRouter = require('./Routes/AuthRouter');
  const ensureAuthenticated = require('./Middlewares/Auth');  
+ const carbonFootprintRoutes = require('./Routes/carbonFootprintRoutes');
 
 require('dotenv').config();
 require('./Models/db');
@@ -20,9 +21,7 @@ app.use(cors());
 
 // Routes
 app.use('/auth', AuthRouter);
-
-
-
+app.use('/api/results', carbonFootprintRoutes);
 
 // Start the server
 app.listen(PORT, () => {
